@@ -74,7 +74,71 @@ const addGoal = async (req, res) => {
   }
 };
 
-//TODO endGame
-// calculate winner and update player stats
+const endGame = async (req, res) => {
+  const { id } = req.params;
 
-module.exports = { getAllGames, getGame, createGame, addGoal };
+  try {
+    const game = await Game.findByPk(id);
+    if (!game) {
+      return res.status(404).json("Game not found");
+    }
+
+    const player1 = await Player.findByPk(game.player1Id);
+    const player2 = await Player.findByPk(game.player2Id);
+
+    if (!player1 || !player2) {
+      return res.status(404).json("One or both players not found");
+    }
+
+    let player1Won = false;
+    let player2Won = false;
+
+    if (game.player1Score === 10) {
+      player1.wins += 1;
+      player2.losses += 1;
+      player1Won = true;
+    } else if (game.player2Score === 10) {
+      player2.wins += 1;
+      player1.losses += 1;
+      player2Won = true;
+    } else {
+      return res.status(400).json("No player scored 10 goals");
+    }
+
+    updatePlayerStats(
+      player1,
+      game.player1Score,
+      game.player2Score,
+      player1Won
+    );
+    updatePlayerStats(
+      player2,
+      game.player2Score,
+      game.player1Score,
+      player2Won
+    );
+
+    await player1.save();
+    await player2.save();
+    console.log("Game ended and players updated!");
+    res.status(200).json({ player1, player2 });
+  } catch (err) {
+    res.status(400).json("Error: " + err);
+  }
+};
+
+const updatePlayerStats = (player, goalsFor, goalsAgainst, won) => {
+  player.gamesPlayed += 1;
+  player.goalsFor += goalsFor;
+  player.goalsAgainst += goalsAgainst;
+  player.goalsDifference += goalsFor - goalsAgainst;
+
+  // Calculate win/loss ratio
+  if (player.losses === 0) {
+    player.winLossRatio = player.wins;
+  } else {
+    player.winLossRatio = player.wins / player.losses;
+  }
+};
+
+module.exports = { getAllGames, getGame, createGame, addGoal, endGame };
