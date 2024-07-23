@@ -152,15 +152,12 @@ function PlayGame() {
                 </div>
 
                 <div className="mt-4">
-                  <Link to="/game/new">
-                    <button className="primary-button">New Game</button>
+                  <Link to="/players">
+                    <button className="secondary-button">Players Stats</button>
                   </Link>
-                  <button
-                    onClick={() => setModalShow(false)}
-                    className="secondary-button ml-8"
-                  >
-                    Close
-                  </button>
+                  <Link to="/game/new">
+                    <button className="primary-button ml-12">New Game</button>
+                  </Link>
                 </div>
               </div>
             </div>
