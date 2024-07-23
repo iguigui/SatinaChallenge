@@ -6,6 +6,7 @@ const { Sequelize } = require("sequelize");
 require("dotenv").config({ path: __dirname + "/../.env" });
 
 const playerRouter = require("./routes/player");
+const gameRouter = require("./routes/game");
 
 // Constants
 const PORT = process.env.PORT || 3001;
@@ -38,6 +39,7 @@ require("./models").init(sequelize);
 
 // Routes
 app.use("/players", playerRouter);
+app.use("/games", gameRouter);
 
 // API
 app.get("/api", (req, res) => {
