@@ -18,7 +18,19 @@ const getGame = async (req, res) => {
     if (!game) {
       return res.status(404).json("Game not found");
     }
-    res.json(game);
+
+    const player1 = await Player.findByPk(game.player1Id);
+    const player2 = await Player.findByPk(game.player2Id);
+
+    if (!player1 || !player2) {
+      return res.status(404).json("One or both players not found");
+    }
+
+    res.json({
+      ...game.toJSON(),
+      player1Name: player1.name,
+      player2Name: player2.name,
+    });
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
