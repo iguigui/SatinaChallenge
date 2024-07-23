@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
 function PlayGame() {
@@ -8,12 +8,21 @@ function PlayGame() {
   const [loading, setLoading] = useState(true);
   const [gameEnded, setGameEnded] = useState(false);
   const [endGameSuccess, setEndGameSuccess] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     const fetchGame = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/games/${id}`);
         setGame(response.data);
+        if (
+          response &&
+          response.data &&
+          (response.data.player1Score === 10 ||
+            response.data.player2Score === 10)
+        ) {
+          setGameEnded(true);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Error fetching game:", error);
@@ -48,6 +57,7 @@ function PlayGame() {
       );
       if (response.status === 200) {
         setEndGameSuccess(true);
+        setModalShow(true);
       }
     } catch (error) {
       console.error("Error ending game:", error);
@@ -58,54 +68,103 @@ function PlayGame() {
     return <div>Loading...</div>;
   }
 
+  const PlayerSection = ({ playerName, playerScore, playerId, disabled }) => (
+    <div className="w-full md:w-1/2 mb-4">
+      <h1 className="text-lg text-semibold mb-2">{playerName}</h1>
+      <h2 className="text-3xl mb-2">Goals: {playerScore}</h2>
+      <button
+        onClick={() => addGoal(playerId)}
+        className="secondary-button"
+        disabled={disabled}
+      >
+        Score a Goal
+      </button>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold mb-4">Game Details</h2>
-      <div className="mb-4">
-        <h1 className="text-xl mb-2">Player 1: {game.player1Name}</h1>
-        <h2 className="text-lg mb-2">Goals: {game.player1Score}</h2>
-        <button
-          onClick={() => addGoal(game.player1Id)}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          disabled={gameEnded}
-        >
-          Add Goal
-        </button>
-      </div>
-      <div className="mb-4">
-        <h1 className="text-xl mb-2">Player 2: {game.player2Name}</h1>
-        <h2 className="text-lg mb-2">Goals: {game.player2Score}</h2>
-        <button
-          onClick={() => addGoal(game.player2Id)}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          disabled={gameEnded}
-        >
-          Add Goal
-        </button>
+    <div className="max-w-3xl px-4 py-6 mt-32 m-auto px-12">
+      <h2 className="text-2xl font-bold mb-4">
+        {game.player1Name} vs {game.player2Name}
+      </h2>
+      <div className="flex flex-row">
+        <PlayerSection
+          playerName={game.player1Name}
+          playerScore={game.player1Score}
+          playerId={game.player1Id}
+          disabled={game.player1Score >= 10 || game.player2Score >= 10}
+        />
+        <PlayerSection
+          playerName={game.player2Name}
+          playerScore={game.player2Score}
+          playerId={game.player2Id}
+          disabled={game.player1Score >= 10 || game.player2Score >= 10}
+        />
       </div>
       {gameEnded && !endGameSuccess && (
-        <button
-          onClick={endGame}
-          className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-        >
-          END GAME
-        </button>
-      )}
-      {endGameSuccess && (
-        <div>
-          <h2 className="text-xl font-bold mt-4 mb-2">Final Scores</h2>
-          <p>
-            Player 1 ({game.player1Name}): {game.player1Score} goals
-          </p>
-          <p>
-            Player 2 ({game.player2Name}): {game.player2Score} goals
-          </p>
-          <button
-            className="text-white bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-            disabled
-          >
-            SAVED
+        <div className="m-auto justify-center">
+          <button onClick={endGame} className="primary-button ">
+            END GAME
           </button>
+        </div>
+      )}
+      {endGameSuccess && modalShow && (
+        <div>
+          <div
+            id="popup-modal"
+            className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
+          >
+            <div className="relative p-4 w-full max-w-md max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
+              <button
+                type="button"
+                className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="popup-modal"
+                onClick={() => setModalShow(false)}
+              >
+                <svg
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 14"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                  />
+                </svg>
+                <span className="sr-only">Close modal</span>
+              </button>
+              <div className="p-4 md:p-5 text-center">
+                <h2 className="text-3xl font-bold mt-4 mb-2">Final Scores</h2>
+                <div className="flex flex-row justify-center items-center my-12">
+                  <div className="w-1/2">
+                    <h3 className="text-xl">{game.player1Name}</h3>
+                    <h1 className="text-5xl">{game.player1Score}</h1>
+                  </div>
+                  <div className="w-1/2">
+                    <h3 className="text-xl">{game.player2Name}</h3>
+                    <h1 className="text-5xl">{game.player2Score}</h1>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <Link to="/game/new">
+                    <button className="primary-button">New Game</button>
+                  </Link>
+                  <button
+                    onClick={() => setModalShow(false)}
+                    className="secondary-button ml-8"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

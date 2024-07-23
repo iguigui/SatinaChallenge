@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function CreateGame() {
   const [players, setPlayers] = useState([]);
@@ -37,13 +38,18 @@ function CreateGame() {
   };
 
   return (
-    <div className="">
-      <h2 className="text-2xl font-bold mb-4">Create Game</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-screen-xl m-auto mt-32 px-12">
+      <div className="flex flex-row justify-between">
+        <h2 className="text-2xl font-bold mb-4">Create Game</h2>
+        <Link to="/players/new">
+          <button className="secondary-button">Add Player</button>
+        </Link>
+      </div>
+      <form onSubmit={handleSubmit} className="max-w-xl mt-16">
         <div className="mb-4">
           <label
             htmlFor="player1"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-lg font-medium text-gray-900 dark:text-white"
           >
             Player 1
           </label>
@@ -67,7 +73,7 @@ function CreateGame() {
         <div className="mb-4">
           <label
             htmlFor="player2"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-lg font-medium text-gray-900 dark:text-white"
           >
             Player 2
           </label>
@@ -88,10 +94,7 @@ function CreateGame() {
             ))}
           </select>
         </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
+        <button type="submit" className="secondary-button">
           Submit
         </button>
       </form>

@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function CreatePlayer() {
   const [name, setName] = useState("");
+  const [addedPlayer, setAddedPlayer] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -11,13 +15,14 @@ function CreatePlayer() {
         name,
       });
       console.log("Player created:", response.data);
+      setAddedPlayer(response.data.name);
     } catch (error) {
       console.error("Error creating player:", error);
     }
   };
 
   return (
-    <div>
+    <div className="max-w-screen-xl m-auto mt-32 px-12">
       <h2 className="text-2xl font-bold mb-4">New Player</h2>
 
       <form onSubmit={handleSubmit}>
@@ -40,13 +45,17 @@ function CreatePlayer() {
             />
           </div>
         </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
+        <button type="submit" className="secondary-button">
           Submit
         </button>
       </form>
+      {addedPlayer && (
+        <div className="mt-4">
+          <p className="text-sm font-semibold text-teal-500">
+            Player {addedPlayer} created!
+          </p>
+        </div>
+      )}
     </div>
   );
 }

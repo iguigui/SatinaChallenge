@@ -18,13 +18,12 @@ function TopPlayers() {
   }, []);
 
   return (
-    <div className="">
+    <div className="max-w-screen-xl m-auto my-32 px-12">
       <h2 className="text-2xl font-bold mb-4">Top Players</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b">ID</th>
               <th className="py-2 px-4 border-b">Name</th>
               <th className="py-2 px-4 border-b">Games Played</th>
               <th className="py-2 px-4 border-b">Wins</th>
@@ -38,7 +37,6 @@ function TopPlayers() {
           <tbody>
             {players.map((player) => (
               <tr key={player.id}>
-                <td className="py-2 px-4 border-b">{player.id}</td>
                 <td className="py-2 px-4 border-b">{player.name}</td>
                 <td className="py-2 px-4 border-b">{player.gamesPlayed}</td>
                 <td className="py-2 px-4 border-b">{player.wins}</td>
