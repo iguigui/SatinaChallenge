@@ -1,0 +1,51 @@
+services:
+  server:
+    container_name: server
+    build:
+      context: ./server/
+    command: npm run start
+    volumes:
+      - ./server/:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - client
+      - server
+  client:
+    container_name: client
+    build:
+      context: ./client/
+    command: npm run start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - client
+  db:
+    container_name: db
+    image: postgres:16.3-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=foosball
+    networks:
+      - server
+volumes:
+  db:
+    driver: local
+networks:
+  client:
+    driver: bridge
+  server:
+    driver: bridge
