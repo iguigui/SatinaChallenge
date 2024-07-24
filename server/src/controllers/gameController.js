@@ -36,7 +36,6 @@ const getAllGames = async (req, res) => {
   }
 };
 
-module.exports = { getAllGames };
 const getGame = async (req, res) => {
   const { id } = req.params;
 
@@ -106,8 +105,8 @@ const addGoal = async (req, res) => {
     }
 
     await game.save();
-    console.log("Game updated:", game);
-    res.json(game);
+    console.log("Game updated:", game.dataValues);
+    res.json(game.dataValues);
   } catch (err) {
     res.status(400).json("Error: " + err);
   }

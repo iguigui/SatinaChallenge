@@ -34,11 +34,17 @@ function PlayGame() {
 
   const addGoal = async (playerId) => {
     try {
-      await axios.post(`http://localhost:3001/games/${id}/add_goal`, {
-        playerId,
+      const response = await axios.patch(
+        `http://localhost:3001/games/${id}/add_goal`,
+        {
+          playerId,
+        }
+      );
+      setGame({
+        ...response.data,
+        player1Name: game.player1Name,
+        player2Name: game.player2Name,
       });
-      const response = await axios.get(`http://localhost:3001/games/${id}`);
-      setGame(response.data);
       if (
         response.data.player1Score === 10 ||
         response.data.player2Score === 10
@@ -52,7 +58,7 @@ function PlayGame() {
 
   const endGame = async () => {
     try {
-      const response = await axios.post(
+      const response = await axios.patch(
         `http://localhost:3001/games/${id}/end_game`
       );
       if (response.status === 200) {
@@ -84,7 +90,7 @@ function PlayGame() {
 
   return (
     <div className="max-w-3xl px-4 py-6 mt-32 m-auto px-12">
-      <h2 className="text-2xl font-bold mb-12">
+      <h2 className="text-2xl font-bold mb-4">
         {game.player1Name} vs {game.player2Name}
       </h2>
       <div className="flex flex-row">
@@ -136,8 +142,8 @@ function PlayGame() {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                   />
                 </svg>

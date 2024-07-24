@@ -7,6 +7,7 @@ require("dotenv").config({ path: __dirname + "/../.env" });
 
 const playerRouter = require("./routes/player");
 const gameRouter = require("./routes/game");
+const { swaggerUi, specs } = require("./swagger");
 
 // Constants
 const PORT = process.env.PORT || 3001;
@@ -41,6 +42,9 @@ require("./models").init(sequelize);
 app.use("/players", playerRouter);
 app.use("/games", gameRouter);
 
+// Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
 // API
 app.get("/api", (req, res) => {
   res.set("Content-Type", "application/json");
@@ -52,5 +56,5 @@ app.get("/api", (req, res) => {
 
 app.listen(PORT, HOST);
 console.log(
-  `Running on http://${HOST}:${PORT}  and using db ${process.env.DB_NAME}`
+  `Running on http://${HOST}:${PORT} and using db ${process.env.DB_NAME}`
 );
