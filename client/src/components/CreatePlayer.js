@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-function CreatePlayer() {
+function CreatePlayer({ setNewPlayerFetch, removePadding }) {
   const [name, setName] = useState("");
   const [addedPlayer, setAddedPlayer] = useState("");
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,13 +13,20 @@ function CreatePlayer() {
       });
       console.log("Player created:", response.data);
       setAddedPlayer(response.data.name);
+      if (setNewPlayerFetch) {
+        setNewPlayerFetch(response.data.name);
+      }
     } catch (error) {
       console.error("Error creating player:", error);
     }
   };
 
   return (
-    <div className="max-w-screen-xl m-auto mt-32 px-12">
+    <div
+      className={`max-w-screen-xl m-auto mt-32 ${
+        removePadding && removePadding === true ? "" : "px-12"
+      }`}
+    >
       <h2 className="text-2xl font-bold mb-4">New Player</h2>
 
       <form onSubmit={handleSubmit}>

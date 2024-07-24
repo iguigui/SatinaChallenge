@@ -103,7 +103,7 @@ function PlayGame() {
       </div>
       {gameEnded && !endGameSuccess && (
         <div className="m-auto justify-center">
-          <button onClick={endGame} className="primary-button ">
+          <button onClick={endGame} className="primary-button mt-12 ">
             END GAME
           </button>
         </div>
@@ -130,7 +130,6 @@ function PlayGame() {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"

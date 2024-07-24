@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+import CreatePlayer from "./CreatePlayer";
+
 function CreateGame() {
   const [players, setPlayers] = useState([]);
   const [player1Id, setPlayer1Id] = useState("");
   const [player2Id, setPlayer2Id] = useState("");
-
+  const [newPlayerFetch, setNewPlayerFetch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +23,7 @@ function CreateGame() {
     };
 
     fetchPlayers();
-  }, []);
+  }, [newPlayerFetch]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -39,12 +41,7 @@ function CreateGame() {
 
   return (
     <div className="max-w-screen-xl m-auto mt-32 px-12">
-      <div className="flex flex-row justify-between">
-        <h2 className="text-2xl font-bold mb-4">Create Game</h2>
-        <Link to="/players/new">
-          <button className="secondary-button">Add Player</button>
-        </Link>
-      </div>
+      <h2 className="text-2xl font-bold mb-4">Create Game</h2>
       <form onSubmit={handleSubmit} className="max-w-xl mt-16">
         <div className="mb-4">
           <label
@@ -98,6 +95,12 @@ function CreateGame() {
           Submit
         </button>
       </form>
+      <div className="mt-16">
+        <CreatePlayer
+          setNewPlayerFetch={setNewPlayerFetch}
+          removePadding={true}
+        />
+      </div>
     </div>
   );
 }
