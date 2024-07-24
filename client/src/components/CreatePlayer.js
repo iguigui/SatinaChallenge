@@ -30,7 +30,7 @@ function CreatePlayer({ setNewPlayerFetch, removePadding }) {
       <h2 className="text-2xl font-bold mb-4">New Player</h2>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid gap-6 mb-6 md:grid-cols-2 mt-8">
+        <div className="grid gap-6 mb-6 md:grid-cols-2 mt-16">
           <div>
             <label
               htmlFor="name"

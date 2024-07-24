@@ -1,15 +1,42 @@
 const Game = require("../models/game");
 const Player = require("../models/player");
 
+const { updatePlayerStats, findWinnerId } = require("../helpers/helpers");
+
 const getAllGames = async (req, res) => {
   try {
-    const games = await Game.findAll();
-    res.json(games);
+    const games = await Game.findAll({
+      order: [["id", "DESC"]],
+    });
+    const players = await Player.findAll();
+
+    const playerMap = players.reduce((map, player) => {
+      map[player.id] = player.name;
+      return map;
+    }, {});
+
+    const gamesWithPlayerNames = games.map((game) => ({
+      id: game.id,
+      player1Id: game.player1Id,
+      player2Id: game.player2Id,
+      player1Score: game.player1Score,
+      player2Score: game.player2Score,
+      player1Name: playerMap[game.player1Id],
+      player2Name: playerMap[game.player2Id],
+      winnerId: game.winnerId,
+      winnerName: game.winnerId ? playerMap[game.winnerId] : null,
+      date: game.date,
+      createdAt: game.createdAt,
+      updatedAt: game.updatedAt,
+    }));
+
+    res.json(gamesWithPlayerNames);
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
 };
 
+module.exports = { getAllGames };
 const getGame = async (req, res) => {
   const { id } = req.params;
 
@@ -86,6 +113,49 @@ const addGoal = async (req, res) => {
   }
 };
 
+const createManualEntry = async (req, res) => {
+  const { player1Id, player2Id, player1Score, player2Score } = req.body;
+
+  try {
+    const player1 = await Player.findByPk(player1Id);
+    const player2 = await Player.findByPk(player2Id);
+
+    if (!player1 || !player2) {
+      return res.status(404).json("One or both players not found");
+    }
+
+    if (player1Score > 10 || player2Score > 10) {
+      return res.status(400).json("Scores cannot be higher than 10");
+    }
+
+    if (player1Score === 10 && player2Score === 10) {
+      return res.status(400).json("There can only be one winner");
+    }
+
+    let game = {
+      player1Id,
+      player2Id,
+      player1Score,
+      player2Score,
+    };
+
+    let winnerId = findWinnerId(game);
+
+    // Add the winnerId to the game object
+    game.winnerId = winnerId;
+
+    const newGame = await Game.create(game);
+
+    if (player1Score === 10 || player2Score === 10) {
+      await savePlayerStats(newGame);
+    }
+
+    res.json({ id: newGame.id });
+  } catch (err) {
+    res.status(400).json("Error: " + err);
+  }
+};
+
 const endGame = async (req, res) => {
   const { id } = req.params;
 
@@ -97,66 +167,51 @@ const endGame = async (req, res) => {
     if (game.winnerId) {
       return res.status(400).json("Game already ended");
     }
-    const player1 = await Player.findByPk(game.player1Id);
-    const player2 = await Player.findByPk(game.player2Id);
 
-    if (!player1 || !player2) {
-      return res.status(404).json("One or both players not found");
-    }
+    let winnerId = findWinnerId(game);
 
-    let player1Won = false;
-    let player2Won = false;
-    let winnerId = null;
+    await savePlayerStats(game);
 
-    if (game.player1Score === 10) {
-      player1.wins += 1;
-      player2.losses += 1;
-      player1Won = true;
-      winnerId = player1.id;
-    } else if (game.player2Score === 10) {
-      player2.wins += 1;
-      player1.losses += 1;
-      player2Won = true;
-      winnerId = player2.id;
-    } else {
-      return res.status(400).json("No player scored 10 goals");
-    }
-
-    updatePlayerStats(
-      player1,
-      game.player1Score,
-      game.player2Score,
-      player1Won
-    );
-    updatePlayerStats(
-      player2,
-      game.player2Score,
-      game.player1Score,
-      player2Won
-    );
-    await player1.save();
-    await player2.save();
     game.winnerId = winnerId;
     await game.save();
+
     console.log("Game ended and players updated!");
-    res.status(200).json({ player1, player2 });
+    res.status(200).json({ message: "Game ended successfully" });
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
 };
 
-const updatePlayerStats = (player, goalsFor, goalsAgainst, won) => {
-  player.gamesPlayed += 1;
-  player.goalsFor += goalsFor;
-  player.goalsAgainst += goalsAgainst;
-  player.goalsDifference += goalsFor - goalsAgainst;
+const savePlayerStats = async (game) => {
+  const player1 = await Player.findByPk(game.player1Id);
+  const player2 = await Player.findByPk(game.player2Id);
 
-  // Calculate win/loss ratio
-  if (player.losses === 0) {
-    player.winLossRatio = player.wins;
-  } else {
-    player.winLossRatio = player.wins / player.losses;
+  if (!player1 || !player2) {
+    throw new Error("One or both players not found");
   }
+
+  if (game.player1Score === 10) {
+    player1.wins += 1;
+    player2.losses += 1;
+  } else if (game.player2Score === 10) {
+    player2.wins += 1;
+    player1.losses += 1;
+  } else {
+    throw new Error("No player scored 10 goals");
+  }
+
+  updatePlayerStats(player1, game.player1Score, game.player2Score);
+  updatePlayerStats(player2, game.player2Score, game.player1Score);
+
+  await player1.save();
+  await player2.save();
 };
 
-module.exports = { getAllGames, getGame, createGame, addGoal, endGame };
+module.exports = {
+  getAllGames,
+  getGame,
+  createGame,
+  createManualEntry,
+  addGoal,
+  endGame,
+};

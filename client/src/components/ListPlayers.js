@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-function TopPlayers() {
+function ListPlayers() {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
@@ -19,11 +20,17 @@ function TopPlayers() {
 
   return (
     <div className="max-w-screen-xl m-auto my-32 px-12">
-      <h2 className="text-2xl font-bold mb-4">Top Players</h2>
-      <div className="overflow-x-auto">
+      <div className="flex flex-row justify-between">
+        <h2 className="text-2xl font-bold mb-4">Top Players</h2>
+        <Link to="/games" className="secondary-button">
+          All Games
+        </Link>
+      </div>
+      <div className="overflow-x-auto mt-16">
         <table className="min-w-full bg-white">
           <thead>
-            <tr>
+            <tr className="text-left">
+              <th className="py-2 px-4 border-b">Position</th>
               <th className="py-2 px-4 border-b">Name</th>
               <th className="py-2 px-4 border-b">Games Played</th>
               <th className="py-2 px-4 border-b">Wins</th>
@@ -35,8 +42,9 @@ function TopPlayers() {
             </tr>
           </thead>
           <tbody>
-            {players.map((player) => (
+            {players.map((player, index) => (
               <tr key={player.id}>
+                <td className="py-2 px-4 border-b">{index + 1}</td>
                 <td className="py-2 px-4 border-b">{player.name}</td>
                 <td className="py-2 px-4 border-b">{player.gamesPlayed}</td>
                 <td className="py-2 px-4 border-b">{player.wins}</td>
@@ -47,6 +55,9 @@ function TopPlayers() {
                 <td className="py-2 px-4 border-b">
                   {player.winLossRatio.toFixed(2)}
                 </td>
+                <td className="py-2 px-4 border-b">
+                  <Link to={`/players/${player.id}`}> </Link>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -56,4 +67,4 @@ function TopPlayers() {
   );
 }
 
-export default TopPlayers;
+export default ListPlayers;

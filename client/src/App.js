@@ -5,9 +5,11 @@ import "./App.css";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
 import CreateGame from "./components/CreateGame";
+import CreateGameEntry from "./components/CreateGameEntry";
 import PlayGame from "./components/PlayGame";
+import ListGames from "./components/ListGames";
 import CreatePlayer from "./components/CreatePlayer";
-import TopPlayers from "./components/TopPlayers";
+import ListPlayers from "./components/ListPlayers";
 
 function App() {
   return (
@@ -16,9 +18,11 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/game/:id" element={<PlayGame />} />
+          <Route path="/game/new_entry" element={<CreateGameEntry />} />
           <Route path="/game/new" element={<CreateGame />} />
+          <Route path="/games" element={<ListGames />} />
           <Route path="/players/new" element={<CreatePlayer />} />
-          <Route path="/players" element={<TopPlayers />} />
+          <Route path="/players" element={<ListPlayers />} />
         </Route>
       </Routes>
     </Router>

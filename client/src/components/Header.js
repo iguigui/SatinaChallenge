@@ -8,6 +8,7 @@ import foosball from "../images/foosball.png";
 const links = [
   { href: "/players/new", label: "New Player" },
   { href: "/players", label: "Top Players" },
+  { href: "/game/new_entry", label: "Manual Entry" },
 ];
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

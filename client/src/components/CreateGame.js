@@ -49,7 +49,12 @@ function CreateGame() {
 
   return (
     <div className="max-w-screen-xl m-auto mt-32 px-12">
-      <h2 className="text-2xl font-bold mb-4">Create Game</h2>
+      <div className="flex flex-row justify-between">
+        <h2 className="text-2xl font-bold mb-4">New Game</h2>
+        <Link to="/games" className="secondary-button">
+          All Games
+        </Link>
+      </div>
       {errorMessage && <div className="mb-4 text-red-600">{errorMessage}</div>}
       <form onSubmit={handleSubmit} className="max-w-xl mt-16">
         <div className="mb-4">

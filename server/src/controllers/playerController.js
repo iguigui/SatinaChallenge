@@ -1,9 +1,13 @@
 const Player = require("../models/player");
 
-//TODO ORDER BY WINLOSS AND SCORE DIFFERENCE
 const getAllPlayers = async (req, res) => {
   try {
-    const players = await Player.findAll();
+    const players = await Player.findAll({
+      order: [
+        ["winLossRatio", "DESC"],
+        ["goalsDifference", "DESC"],
+      ],
+    });
     res.json(players);
   } catch (err) {
     res.status(400).json("Error: " + err);

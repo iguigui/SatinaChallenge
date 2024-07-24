@@ -74,7 +74,7 @@ function PlayGame() {
       <h2 className="text-3xl mb-2">Goals: {playerScore}</h2>
       <button
         onClick={() => addGoal(playerId)}
-        className="secondary-button"
+        className="secondary-button mt-8"
         disabled={disabled}
       >
         Score a Goal
@@ -84,7 +84,7 @@ function PlayGame() {
 
   return (
     <div className="max-w-3xl px-4 py-6 mt-32 m-auto px-12">
-      <h2 className="text-2xl font-bold mb-4">
+      <h2 className="text-2xl font-bold mb-12">
         {game.player1Name} vs {game.player2Name}
       </h2>
       <div className="flex flex-row">

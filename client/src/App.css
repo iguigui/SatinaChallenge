@@ -46,6 +46,13 @@
   border-radius: 5px;
 }
 
+.success-button {
+  background-color: #0d8500;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

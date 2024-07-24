@@ -87,6 +87,32 @@ To access the client, open `http://localhost:3000` in your browser.
 }
 ```
 
+### Create Manual Entry (Game)
+
+- Description: Creates a new manual entry of a past game. If one of the player score is 10, it will save the player stats automatically
+- Method: `POST`
+- Endpoint: `/games/add_entry`
+- Body:
+
+```
+
+{
+"player1Id": 1,
+"player2Id": 2
+"player1Score": 0,
+"player2Score": 10,
+}
+
+```
+
+- Response:
+
+```
+{
+"id": 25
+}
+```
+
 ### Add Goal
 
 - Description: Adds a goal to a player’s score in a game.
