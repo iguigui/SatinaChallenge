@@ -10,6 +10,7 @@ function CreateGame() {
   const [player1Id, setPlayer1Id] = useState("");
   const [player2Id, setPlayer2Id] = useState("");
   const [newPlayerFetch, setNewPlayerFetch] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,13 @@ function CreateGame() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (player1Id === player2Id) {
+      setErrorMessage("Player 1 and Player 2 cannot be the same.");
+      setPlayer1Id("");
+      setPlayer2Id("");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:3001/games/add", {
         player1Id,
@@ -42,6 +50,7 @@ function CreateGame() {
   return (
     <div className="max-w-screen-xl m-auto mt-32 px-12">
       <h2 className="text-2xl font-bold mb-4">Create Game</h2>
+      {errorMessage && <div className="mb-4 text-red-600">{errorMessage}</div>}
       <form onSubmit={handleSubmit} className="max-w-xl mt-16">
         <div className="mb-4">
           <label

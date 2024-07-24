@@ -21,6 +21,7 @@ class Game extends Model {
           allowNull: false,
           defaultValue: 0,
         },
+        winnerId: { type: DataTypes.INTEGER, defaultValue: null },
         date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       },
       { sequelize, modelName: "Game" }

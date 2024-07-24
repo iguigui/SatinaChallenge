@@ -94,7 +94,9 @@ const endGame = async (req, res) => {
     if (!game) {
       return res.status(404).json("Game not found");
     }
-
+    if (game.winnerId) {
+      return res.status(400).json("Game already ended");
+    }
     const player1 = await Player.findByPk(game.player1Id);
     const player2 = await Player.findByPk(game.player2Id);
 
@@ -104,15 +106,18 @@ const endGame = async (req, res) => {
 
     let player1Won = false;
     let player2Won = false;
+    let winnerId = null;
 
     if (game.player1Score === 10) {
       player1.wins += 1;
       player2.losses += 1;
       player1Won = true;
+      winnerId = player1.id;
     } else if (game.player2Score === 10) {
       player2.wins += 1;
       player1.losses += 1;
       player2Won = true;
+      winnerId = player2.id;
     } else {
       return res.status(400).json("No player scored 10 goals");
     }
@@ -129,9 +134,10 @@ const endGame = async (req, res) => {
       game.player1Score,
       player2Won
     );
-
     await player1.save();
     await player2.save();
+    game.winnerId = winnerId;
+    await game.save();
     console.log("Game ended and players updated!");
     res.status(200).json({ player1, player2 });
   } catch (err) {

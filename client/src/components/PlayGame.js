@@ -101,7 +101,13 @@ function PlayGame() {
           disabled={game.player1Score >= 10 || game.player2Score >= 10}
         />
       </div>
-      {gameEnded && !endGameSuccess && (
+      {game.winnerId && (
+        <div className="mt-8">
+          This game has ended. The winner is{" "}
+          {game.player1Score === 10 ? game.player1Name : game.player2Name}.
+        </div>
+      )}
+      {gameEnded && !endGameSuccess && !game.winnerId && (
         <div className="m-auto justify-center">
           <button onClick={endGame} className="primary-button mt-12 ">
             END GAME
