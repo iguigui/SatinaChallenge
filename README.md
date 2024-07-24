@@ -59,6 +59,7 @@ To access the client, open `http://localhost:3000` in your browser.
   "player2Score": 5,
   "player1Name": "John",
   "player2Name": "Jane"
+  "winnerId": null
   }
   ```
 
@@ -145,6 +146,8 @@ To access the client, open `http://localhost:3000` in your browser.
     }
 }
 ```
+
+This will also update the table Game winnerId with the winnerId.
 
 ## Player Routes
 
