@@ -49,7 +49,7 @@ function ListGames() {
                   {game.winnerName ? game.winnerName : "--"}
                 </td>
                 <td className="py-2 px-4 border-b">
-                  {game.winnerId ? "GAME END" : "Playing..."}
+                  {game.winnerId ? "Ended" : "Playing..."}
                 </td>
                 <td className="py-2 px-4 border-b">
                   <Link to={`/game/${game.id}`}>
